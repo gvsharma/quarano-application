@@ -16,10 +16,11 @@
 --> "CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "angelegt"
 13 - wähle Indexfall "Berta Benz" aus
 14 - wähle "Nachverfolgung Starten"
---> CHECK: Tab "Email-Vorlage" inkl. Button "Aktivierungscode erneuern" ist vorhanden
-15 - Extrahiere Anmeldelink aus dem Template
 --> CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "in Registrierung"
-16 - Logout als GAMA
+--> CHECK: Tab "Email-Vorlage" ist vorhanden
+14A - Aufrufen der E-Mail Vorlage
+--> CHECK: Button "Aktivierungscode erneuern" ist vorhanden
+15 - Extrahiere Anmeldelink aus dem Template16 - Logout als GAMA
 17 - Anmeldelink aufrufen
 18 - Klick auf Weiter
 19 - Benutzername: "Berta"
@@ -134,9 +135,43 @@ describe('S7 - Status wechselt korrekt', () => {
     cy.get('[data-cy="start-tracking-button"]').should('be.enabled');
     cy.get('[data-cy="start-tracking-button"]').click();
 
-    /* CHECK: Tab "Email-Vorlage" inkl. Button "Aktivierungscode erneuern" ist vorhanden */
-    console.log('Hello');
+    /* CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "in Registrierung" */
 
-    /* 15 - Extrahiere Anmeldelink aus dem Template */
+    /* CHECK: Tab "Email-Vorlage" ist vorhanden */
+    cy.get('.mat-tab-links').children().should('have.length', 6);
+    cy.get('.mat-tab-links').children().contains('E-Mail Vorlage');
+
+    /* 14A - Aufrufen der E-Mail Vorlage */
+    cy.get('[data-cy="tab-link-email"]').should('exist').click();
+    cy.wait(500);
+
+    /* CHECK: Button "Aktivierungscode erneuern" ist vorhanden */
+    cy.get('[data-cy="button-renew-activation-code"]').should('exist');
+
+    cy.get('qro-client-mail > div > pre')
+      .should('exist')
+      .then((elem) => {
+        /* 15 - Extrahiere Anmeldelink aus dem Template */
+        const regex = /https:\/\/.*\/client\/enrollment\/landing\/index\/.*/gm;
+        let content;
+        let url = '';
+
+        if (typeof elem !== 'string') {
+          content = elem.text();
+        } else {
+          content = elem;
+        }
+
+        const urls = regex.exec(content);
+        if (urls && urls.length !== 0) {
+          url = urls[0];
+        }
+
+        expect(url).to.contain('client/enrollment/landing/index');
+
+        /* 16 - Logout als GAMA */
+        cy.get('[data-cy="profile-user-button"]').should('exist').click();
+        cy.get('[data-cy="logout-button"]').should('exist').click();
+      });
   });
 });
