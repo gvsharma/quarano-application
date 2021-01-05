@@ -16,6 +16,7 @@
 --> "CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "angelegt"
 13 - wähle Indexfall "Berta Benz" aus
 14 - wähle "Nachverfolgung Starten"
+--> CHECK: Tab "Email-Vorlage" inkl. Button "Aktivierungscode erneuern" ist vorhanden
 15 - Extrahiere Anmeldelink aus dem Template
 --> CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "in Registrierung"
 16 - Logout als GAMA
@@ -59,16 +60,18 @@
 */
 
 describe('S7 - Status wechselt korrekt', () => {
-  /*   
-Cypress.config('defaultCommandTimeout', 20000);
+  Cypress.config('defaultCommandTimeout', 20000);
   before((done) => {
     cy.restart(done);
   });
-   */
+
   it('should run', () => {
     /* 0 - Login als Gama "agent1" */
     cy.loginAgent();
-    //cy.wait(100);
+
+    //TODO
+    /* Route Definitionen */
+    cy.route('GET', '/hd/actions').as('createIndex');
 
     /* 1 - wähle Übersichtsseite "Indexfälle" */
     cy.get('[data-cy="index-cases"]').should('exist').click();
@@ -104,26 +107,36 @@ Cypress.config('defaultCommandTimeout', 20000);
     cy.get('[data-cy="city-input"]').should('exist').type('Mannheim');
 
     /* 12 - wähle "Speichern und schließen" */
-    /* Does not work - known issue */
-    //cy.get('[data-cy="client-submit-and-close-button"] button').should('exist').click();
-    /* temporary alternative to not save the data */
-    cy.get('[data-cy="client-cancel-button"]').should('exist').click(); //temporary
+    cy.get('[data-cy="client-submit-and-close-button"] button').should('exist').click();
 
     /* CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "angelegt" */
-    cy.get('[data-cy="search-case-input"]').should('exist').type('Harriette Hirsch'); //TODO: change name to "Berta Benz"
-    cy.get('.ag-center-cols-container div [col-id="status"]').contains('angelegt');
+    cy.get('[data-cy="search-case-input"]').should('exist').type('Berta Benz');
+    cy.get('.ag-center-cols-container > div > [col-id="status"]').contains('angelegt');
 
-    /* TODO - Seite wird nicht dargestellt */
     /* 13 - wähle Indexfall "Berta Benz" aus */
-    cy.get('.ag-center-cols-container div [col-id="status"]').click(); //nicht in der Doku enthalten
-    //cy.get('.ag-center-cols-viewport div').first().should('exist').click();
+    cy.get('[data-cy="case-data-table"]')
+      .find('.ag-center-cols-container > .ag-row')
+      .should('have.length.greaterThan', 0);
+    cy.get('[data-cy="case-data-table"]')
+      .find('.ag-center-cols-container > .ag-row')
+      .then(($elems) => {
+        $elems[0].click();
+      });
 
-    /* CHECK: Überprüfung, ob die Seite gewechselt wurde */ cy.location('pathname').should(
-      'include',
-      'health-department/case-detail/index/'
-    );
+    /* CHECK: Überprüfung, ob die Seite gewechselt wurde */
+    //REGEX hinzufügen
+    //const indexUrlReg = /^health-department\/case-detail\/index\/.*\/edit$/;
+    //cy.url().should('match', /^health-department\/case-detail\/index\/.*\/edit$/);
+    cy.url().should('contain', 'health-department/case-detail/index/');
 
     /* 14 - wähle "Nachverfolgung Starten" */
-    cy.get('[data-cy="start-tracking-button"]').should('exist'); //.click();
+    cy.get('[data-cy="start-tracking-button"]').should('exist');
+    cy.get('[data-cy="start-tracking-button"]').should('be.enabled');
+    cy.get('[data-cy="start-tracking-button"]').click();
+
+    /* CHECK: Tab "Email-Vorlage" inkl. Button "Aktivierungscode erneuern" ist vorhanden */
+    console.log('Hello');
+
+    /* 15 - Extrahiere Anmeldelink aus dem Template */
   });
 });
