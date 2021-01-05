@@ -2,10 +2,22 @@
   <pre [innerHTML]="mailText$ | async"></pre>
 </div>
 <div class="button-area" *ngIf="tracking$ | async as tracking">
-  <button type="submit" data-cy="copy-to-clipboard" mat-raised-button color="primary" (click)="copyToClipBoard(tracking)">
+  <button
+    type="submit"
+    data-cy="copy-to-clipboard"
+    mat-raised-button
+    color="primary"
+    (click)="copyToClipBoard(tracking)"
+  >
     In die Zwischenablage kopieren
   </button>
-  <button type="button" mat-raised-button color="secondary" (click)="renewTracking(tracking)">
+  <button
+    type="button"
+    data-cy="button-renew-activation-code"
+    mat-raised-button
+    color="secondary"
+    (click)="renewTracking(tracking)"
+  >
     Aktivierungscode erneuern
   </button>
 </div>

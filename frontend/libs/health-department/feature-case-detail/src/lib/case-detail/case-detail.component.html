@@ -72,6 +72,7 @@
     </div>
     <nav mat-tab-nav-bar>
       <a
+        data-cy="tab-link-data"
         *ngIf="type$ | async as type"
         mat-tab-link
         [routerLink]="['edit']"
@@ -82,6 +83,7 @@
         {{ type === ClientType.Index ? 'Falldaten' : 'Stammdaten' }}
       </a>
       <a
+        data-cy="tab-link-actions"
         mat-tab-link
         [routerLink]="['actions']"
         routerLinkActive
@@ -102,6 +104,7 @@
         </ng-template>
       </a>
       <a
+        data-cy="tab-link-comments"
         *ngIf="caseDetail.comments"
         mat-tab-link
         [routerLink]="['comments']"
@@ -112,6 +115,7 @@
         Kommentare <span class="info-badge">{{ caseDetail.comments.length }}</span>
       </a>
       <a
+        data-cy="tab-link-index-case-data"
         *ngIf="caseDetail?.indexContacts?.length > 0"
         mat-tab-link
         [routerLink]="['index-case-data']"
@@ -122,6 +126,7 @@
         Angaben Indexfall
       </a>
       <a
+        data-cy="tab-link-email"
         *ngIf="caseDetail?._links?.hasOwnProperty('renew')"
         mat-tab-link
         [routerLink]="['email']"
@@ -132,6 +137,7 @@
         E-Mail Vorlage
       </a>
       <a
+        data-cy="tab-link-questionnaire"
         *ngIf="caseDetail?._links?.hasOwnProperty('questionnaire')"
         mat-tab-link
         [routerLink]="['questionnaire']"
@@ -142,6 +148,7 @@
         Fragebogen
       </a>
       <a
+        data-cy="tab-link-contacts"
         mat-tab-link
         [routerLink]="['contacts']"
         routerLinkActive
@@ -152,6 +159,7 @@
         Kontakte <span class="info-badge">{{ caseDetail.contactCount }}</span>
       </a>
       <a
+        data-cy="tab-link-diary"
         *ngIf="!isNew"
         data-cy="case-detail-diary-link"
         mat-tab-link
