@@ -125,22 +125,60 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', () => {
     cy.get('a.mat-tab-link.mat-focus-indicator.ng-star-inserted[ng-reflect-router-link="email"]')
       .should('exist')
       .click();
-    // cy.get('pre').
+    cy.get('qro-client-mail > div > pre')
+      .should('exist')
+      .then((elem) => {
+        // const regex = /https:\/\/.*\/client\/enrollment\/landing\/index\/.*/gm;
+        // TODO sollte hier nicht wirklich die https verwendet werden?
+        const regex = /\/client\/enrollment\/landing\/index\/.*/gm;
+        let content;
+        let url = '';
 
-    // 15 - Logout als GAMA
-    cy.get('[data-cy="profile-user-button"]').should('exist').click();
-    cy.get('[data-cy="logout-button"]').should('exist').click();
+        if (typeof elem !== 'string') {
+          content = elem.text();
+        } else {
+          content = elem;
+        }
 
-    // 16 - Anmeldelink aufrufen
+        const urls = regex.exec(content);
+        if (urls && urls.length !== 0) {
+          url = urls[0];
+        }
+
+        // 15 - Logout als GAMA
+        cy.get('[data-cy="profile-user-button"]').should('exist').click();
+        cy.get('[data-cy="logout-button"]').should('exist').click();
+
+        // 16 - Anmeldelink aufrufen
+        cy.visit(url);
+      });
+
     // 17 - Klick auf Weiter
+    cy.get('[data-cy="cta-button-index"]').should('exist').click();
+
     // 18 - Benutzername: "Julia"
+    cy.get('[data-cy="input-username"]').should('exist').type('Julia');
+
     // 19 - Passwort: "Password01!"
+    cy.get('[data-cy="input-password"]').should('exist').type('Password01!');
+
     // 20 - Passwort bestätgen  "Password01!"
+    cy.get('[data-cy="input-password-confirm"]').should('exist').type('Password01!');
+
     // 21 - Geburtsdatum: 06.10.1982
+    cy.get('[data-cy="input-dateofbirth"]').should('exist').type('06.10.1982');
+
     // 22 - AGB aktivieren
+    cy.get('[data-cy="input-privacy-policy"]').should('exist').click();
+
     // 23 - Klick auf "Registrieren" Button
+    cy.get('[data-cy="registration-submit-button"]').should('exist').click();
+
     // 24 - Klick auf "weiter"
+    cy.get('[data-cy="first-step-button"]').should('exist').click();
+
     // 25 - Haben Sie bereits Covid-19 charakteristische Symptome festgestellt? -> "Nein"
+
     // 26 - Bitte geben Sie Ihren behandelnden Hausarzt an. -> Dr. Schmidt
     // 27 - Nennen Sie uns bitte den (vermuteten) Ort der Ansteckung: -> "Familie"
     // 28 - Haben Sie eine oder mehrere relevante Vorerkrankungen? -> "nein"
