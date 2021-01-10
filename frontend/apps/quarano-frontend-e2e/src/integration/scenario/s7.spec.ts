@@ -224,14 +224,43 @@ describe('S7 - Status wechselt korrekt', () => {
 
         /* 29 - Login als Bürger ("Berta"; "Password03!") */
         cy.logIn('Berta', 'Password03!');
+
+        /* Check */
+        cy.get('[data-cy="second-step-button"] button').should('be.disabled');
+
         /* 30 - Initialer Fragebogen "Covid-19-Symptome" -> "nein" */
+        cy.get('[data-cy="has-no-symptoms-option"]').click();
+
         /* 31 - Bitte geben Sie Ihren behandelnden Hausarzt an. -> Dr. Schmidt */
+        cy.get('[data-cy="familyDoctor"]').type('Dr. Schmidt');
+
+        //TODO -> data-cy zu Komponente hinzufügen
         /* 32 - Nennen Sie uns bitte den (vermuteten) Ort der Ansteckung: -> "Familie" */
+        cy.get('[formcontrolname="guessedOriginOfInfection"]').type('Familie');
+
         /* 33 - Haben Sie eine oder mehrere relevante Vorerkrankungen? -> "nein" */
+        cy.get('[data-cy="has-no-pre-existing-conditions-option"]').click();
+
         /* 34 - Arbeiten Sie im medizinischen Umfeld oder in der Pflege? -> "nein" */
+        cy.get('[data-cy="no-medical-staff-option"]').click();
+
         /* 35 - Haben Sie Kontakt zu Risikopersonen? -> "nein" */
+        cy.get('[data-cy="no-contact-option"]').click();
+
         /* 36 - Klick "weiter" */
+        cy.get('[data-cy="second-step-button"] button').should('be.enabled');
+        cy.get('[data-cy="second-step-button"] button').click();
+
+        /* CHECK: Seite 3 */
+        cy.get('[data-cy="third-step-button"]').should('exist');
+
+        //TODO
         /* 37 - Kontakte mit anderen Menschen -> "Carl Benz" */
+        cy.get('[data-cy="multiple-auto-complete-input"]').first().click();
+        cy.get('[data-cy="multiple-auto-complete-input"]').first().type('Carl Benz');
+
+        cy.pause();
+
         /* 38 - Klick enter */
         /* 39 - wähle "Kontakt anlegen" in Popup */
         /* 40 - Telefonnummer (mobil) -> "017196347526" */
@@ -248,6 +277,7 @@ describe('S7 - Status wechselt korrekt', () => {
         /* 50 - wähle in Übersicht der Indexfälle den Filter "abgeschlossen" */
         /* --> CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "abgeschlossen" */
         /* 51 - Logout als GAMA */
+        cy.logOut();
       });
   });
 });
