@@ -5,7 +5,7 @@
       <span>
         {{ (type$ | async) === ClientType.Index ? 'Falldetails' : 'Kontaktperson' }} {{ caseDetail.firstName }}
         {{ caseDetail.lastName }}
-        <span class="status" *ngIf="caseDetail.status">{{ caseDetail.status }}</span>
+        <span data-cy="case-status" class="status" *ngIf="caseDetail.status">{{ caseDetail.status }}</span>
       </span>
       <span class="type"
         >{{ caseLabel$ | async }}
@@ -72,7 +72,7 @@
     </div>
     <nav mat-tab-nav-bar>
       <a
-        data-cy="tab-link-data"
+        data-cy="data-tab"
         *ngIf="type$ | async as type"
         mat-tab-link
         [routerLink]="['edit']"
@@ -83,7 +83,7 @@
         {{ type === ClientType.Index ? 'Falldaten' : 'Stammdaten' }}
       </a>
       <a
-        data-cy="tab-link-actions"
+        data-cy="actions-tab"
         mat-tab-link
         [routerLink]="['actions']"
         routerLinkActive
@@ -104,7 +104,7 @@
         </ng-template>
       </a>
       <a
-        data-cy="tab-link-comments"
+        data-cy="comments-tab"
         *ngIf="caseDetail.comments"
         mat-tab-link
         [routerLink]="['comments']"
@@ -115,7 +115,7 @@
         Kommentare <span class="info-badge">{{ caseDetail.comments.length }}</span>
       </a>
       <a
-        data-cy="tab-link-index-case-data"
+        data-cy="index-case-data-tab"
         *ngIf="caseDetail?.indexContacts?.length > 0"
         mat-tab-link
         [routerLink]="['index-case-data']"
@@ -137,7 +137,7 @@
         E-Mail Vorlage
       </a>
       <a
-        data-cy="tab-link-questionnaire"
+        data-cy="questionnaire-tab"
         *ngIf="caseDetail?._links?.hasOwnProperty('questionnaire')"
         mat-tab-link
         [routerLink]="['questionnaire']"
@@ -148,7 +148,7 @@
         Fragebogen
       </a>
       <a
-        data-cy="tab-link-contacts"
+        data-cy="contacts-tab"
         mat-tab-link
         [routerLink]="['contacts']"
         routerLinkActive
@@ -159,7 +159,7 @@
         Kontakte <span class="info-badge">{{ caseDetail.contactCount }}</span>
       </a>
       <a
-        data-cy="tab-link-diary"
+        data-cy="diary-tab"
         *ngIf="!isNew"
         data-cy="case-detail-diary-link"
         mat-tab-link
