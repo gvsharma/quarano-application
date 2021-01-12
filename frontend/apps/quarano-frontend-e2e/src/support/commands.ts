@@ -16,6 +16,8 @@ declare namespace Cypress {
     logOut: () => void;
 
     restartBackend: (done: (err?: any) => void) => void;
+
+    extractActivationCode: (i: number, regex: Regex) => Chainable;
   }
 }
 
@@ -42,6 +44,37 @@ const logIn = (username: string, password: string) => {
   cy.wait('@logIn');
 };
 
+enum Regex {
+  Index,
+  Contact,
+}
+const extractActivationCode = (elem: JQuery, i: number, regexEnum: Regex) => {
+  let regex;
+  if (regexEnum === Regex.Index) {
+    regex = /\/client\/enrollment\/landing\/index\/(.*)/g;
+  } else if (regexEnum === Regex.Contact) {
+    regex = /\/client\/enrollment\/landing\/contact\/(.*)/g;
+  }
+
+  let content;
+
+  if (typeof elem !== 'string') {
+    content = elem.text();
+  } else {
+    content = elem;
+  }
+
+  try {
+    return cy.wrap(regex.exec(content)[i]);
+  } catch (e) {
+    cy.log(e);
+    throw e;
+  }
+};
+
+Cypress.Commands.add('extractActivationCode', { prevSubject: true }, (subject, i: number, regex: Regex) => {
+  return extractActivationCode(subject, i, regex);
+});
 Cypress.Commands.add('logOut', () => {
   logOut();
 });

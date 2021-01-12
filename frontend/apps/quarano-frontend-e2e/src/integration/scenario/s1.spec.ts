@@ -11,23 +11,6 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', () => {
     cy.route('PUT', '/hd/cases/*/registration').as('registration');
   });
 
-  function extractActivationCode(elem: JQuery) {
-    const regex = /\/client\/enrollment\/landing\/index\/(.*)/g;
-    let content;
-
-    if (typeof elem !== 'string') {
-      content = elem.text();
-    } else {
-      content = elem;
-    }
-
-    try {
-      return regex.exec(content)[1];
-    } catch (e) {
-      cy.log(e);
-      throw e;
-    }
-  }
   it('run scenario 1', () => {
     // 0 - Login als Gama "agent1"
     cy.logInAgent();
@@ -77,30 +60,13 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', () => {
       .click();
     cy.get('qro-client-mail > div > pre')
       .should('exist')
-      .then((elem) => {
-        // const regex = /https:\/\/.*\/client\/enrollment\/landing\/index\/.*/gm;
-        // TODO sollte hier nicht wirklich die https verwendet werden?
-        const regex = /\/client\/enrollment\/landing\/index\/.*/gm;
-        let content;
-        let url = '';
-
-        if (typeof elem !== 'string') {
-          content = elem.text();
-        } else {
-          content = elem;
-        }
-
-        const urls = regex.exec(content);
-        if (urls && urls.length !== 0) {
-          url = urls[0];
-        }
-
+      .extractActivationCode(0, 0)
+      .then((extractedActivationCode) => {
         // 15 - Logout als GAMA
-        cy.get('[data-cy="profile-user-button"]').should('exist').click();
-        cy.get('[data-cy="logout-button"]').should('exist').click();
+        cy.logOut();
 
         // 16 - Anmeldelink aufrufen
-        cy.visit(url);
+        cy.visit(extractedActivationCode);
       });
 
     // 17 - Klick auf Weiter
@@ -128,19 +94,41 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', () => {
     cy.get('[data-cy="first-step-button"]').should('exist').click();
 
     // 25 - Haben Sie bereits Covid-19 charakteristische Symptome festgestellt? -> "Nein"
+    cy.get('[data-cy="has-no-pre-existing-conditions-option"]').should('exist').click();
 
     // 26 - Bitte geben Sie Ihren behandelnden Hausarzt an. -> Dr. Schmidt
+    cy.get('[data-cy="familyDoctor"]').should('exist').type('Dr. Schmidt');
+
     // 27 - Nennen Sie uns bitte den (vermuteten) Ort der Ansteckung: -> "Familie"
+    // cy.get('[]').should('exist').type('Familie');
+
     // 28 - Haben Sie eine oder mehrere relevante Vorerkrankungen? -> "nein"
+    cy.get('[data-cy="has-no-symptoms-option"]').should('exist').click();
+
     // 29 - Arbeiten Sie im medizinischen Umfeld oder in der Pflege? -> "nein"
+    cy.get('[data-cy="no-medical-staff-option"]').should('exist').click();
+
     // 30 - Haben Sie Kontakt zu Risikopersonen? -> "nein"
+    cy.get('[data-cy="no-contact-option"]').should('exist').click();
+
     // 31 - Klick "weiter"
+    cy.get('[data-cy="second-step-button"]').should('exist').click();
+
     // 32 - Kontakte mit anderen Menschen -> "Manfred Klein"
+    // cy.get('[]').should('exist').type('Manfred Klein');
+
     // 33 - Klick enter
+
     // 34 - wähle "Kontakt anlegen" in Popup
+    // cy.get('[data-cy="confirm-button"]').should('exist').click();
+
     // 35 - Telefonnummer (mobil) -> "01758631534"
+
     // 36 - Klick auf "speichern"
+
     // 37 - Klick auf "Erfassung abschließen"
+    // cy.get('[data-cy="third-step-button"]').should('exist').click();
+
     // 38 - Logout als Bürger
     // 39 - Login als GAMA "agent1"
     // 40 - suche Indexfall "Julia Klein"
