@@ -1,7 +1,6 @@
 /// <reference types="cypress" />
 
-describe('S1 - Externe PLZ führt zu Status externe PLZ', () => {
-  Cypress.config('defaultCommandTimeout', 20000);
+describe('S1 - Externe PLZ führt zu Status externe PLZ', { defaultCommandTimeout: 20000 }, () => {
   before((done) => {
     cy.restartBackend(done);
 
@@ -55,12 +54,10 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', () => {
     cy.get('[data-cy="start-tracking-span"]').should('exist').click();
 
     // 14 - Extrahiere Anmeldelink aus dem Template
-    cy.get('a.mat-tab-link.mat-focus-indicator.ng-star-inserted[ng-reflect-router-link="email"]')
-      .should('exist')
-      .click();
+    cy.get('[data-cy="email-tab"]').should('exist').click();
     cy.get('qro-client-mail > div > pre')
       .should('exist')
-      .extractActivationCode(0, 0)
+      .extractActivationCode(0, Cypress.env('regex')['index'])
       .then((extractedActivationCode) => {
         // 15 - Logout als GAMA
         cy.logOut();
@@ -100,7 +97,8 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', () => {
     cy.get('[data-cy="familyDoctor"]').should('exist').type('Dr. Schmidt');
 
     // 27 - Nennen Sie uns bitte den (vermuteten) Ort der Ansteckung: -> "Familie"
-    // cy.get('[]').should('exist').type('Familie');
+    // TODO data-cy
+    cy.get('input[formcontrolname="guessedOriginOfInfection"]').should('exist').type('Familie');
 
     // 28 - Haben Sie eine oder mehrere relevante Vorerkrankungen? -> "nein"
     cy.get('[data-cy="has-no-symptoms-option"]').should('exist').click();
@@ -114,22 +112,26 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', () => {
     // 31 - Klick "weiter"
     cy.get('[data-cy="second-step-button"]').should('exist').click();
 
-    // 32 - Kontakte mit anderen Menschen -> "Manfred Klein"
-    // cy.get('[]').should('exist').type('Manfred Klein');
-
+    // 32 - Kontakte mit anderen Menschen (Kontaktperson heute) -> "Manfred Klein"
     // 33 - Klick enter
+    cy.get('[data-cy="multiple-auto-complete-input"]').should('exist').first().type('Manfred Klein').blur();
 
     // 34 - wähle "Kontakt anlegen" in Popup
-    // cy.get('[data-cy="confirm-button"]').should('exist').click();
+    cy.get('[data-cy="confirm-button"]').should('exist').click();
 
     // 35 - Telefonnummer (mobil) -> "01758631534"
+    // TODO data-cy
+    cy.get('input').should('exist').type('01758631534');
 
     // 36 - Klick auf "speichern"
+    // TODO data-cy
+    cy.get('button.mat-focus-indicator.mat-raised-button.mat-button-base.mat-primary').should('exist').click();
 
     // 37 - Klick auf "Erfassung abschließen"
-    // cy.get('[data-cy="third-step-button"]').should('exist').click();
+    cy.get('[data-cy="third-step-button"]').should('exist').click();
 
     // 38 - Logout als Bürger
+    cy.logOut();
     // 39 - Login als GAMA "agent1"
     // 40 - suche Indexfall "Julia Klein"
     // 41 - wähle Reiter "Kontakte"

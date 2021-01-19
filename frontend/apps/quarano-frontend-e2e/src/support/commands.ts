@@ -17,7 +17,7 @@ declare namespace Cypress {
 
     restartBackend: (done: (err?: any) => void) => void;
 
-    extractActivationCode: (i: number, regex: Regex) => Chainable;
+    extractActivationCode: (i: number, regex: number) => Chainable;
   }
 }
 
@@ -44,19 +44,15 @@ const logIn = (username: string, password: string) => {
   cy.wait('@logIn');
 };
 
-enum Regex {
-  Index,
-  Contact,
-}
-const extractActivationCode = (elem: JQuery, i: number, regexEnum: Regex) => {
-  let regex;
-  if (regexEnum === Regex.Index) {
+const extractActivationCode = (elem: JQuery, i: number, regexNum: number) => {
+  let regex: RegExp;
+  if (regexNum === Cypress.env('regex')['index']) {
     regex = /\/client\/enrollment\/landing\/index\/(.*)/g;
-  } else if (regexEnum === Regex.Contact) {
+  } else if (regexNum === Cypress.env('regex.contact')) {
     regex = /\/client\/enrollment\/landing\/contact\/(.*)/g;
   }
 
-  let content;
+  let content: string;
 
   if (typeof elem !== 'string') {
     content = elem.text();
@@ -72,7 +68,7 @@ const extractActivationCode = (elem: JQuery, i: number, regexEnum: Regex) => {
   }
 };
 
-Cypress.Commands.add('extractActivationCode', { prevSubject: true }, (subject, i: number, regex: Regex) => {
+Cypress.Commands.add('extractActivationCode', { prevSubject: true }, (subject, i: number, regex: number) => {
   return extractActivationCode(subject, i, regex);
 });
 Cypress.Commands.add('logOut', () => {
