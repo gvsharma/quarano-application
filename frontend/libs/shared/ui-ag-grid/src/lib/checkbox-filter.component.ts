@@ -10,14 +10,18 @@ import { uniq } from 'lodash';
       <span class="example-list-section">
         <ul>
           <li *ngFor="let option of options">
-            <mat-checkbox [(ngModel)]="option.selected" (ngModelChange)="onChange()">
+            <mat-checkbox [(ngModel)]="option.selected" (ngModelChange)="onChange()" data-cy="checkbox-filter">
               {{ option.label }}
             </mat-checkbox>
           </li>
         </ul>
       </span>
-      <button mat-stroked-button (click)="selectAll()" *ngIf="hasUnselectedOptions()">Alle</button>
-      <button mat-stroked-button (click)="deselectAll()" *ngIf="areAllOptionsSelected()">Alle abwählen</button>
+      <button mat-stroked-button (click)="selectAll()" *ngIf="hasUnselectedOptions()" data-cy="button-selectAll">
+        Alle
+      </button>
+      <button mat-stroked-button (click)="deselectAll()" *ngIf="areAllOptionsSelected()" data-cy="button-unselectAll">
+        Alle abwählen
+      </button>
     </section>
   `,
   styles: [

@@ -1,65 +1,4 @@
 /// <reference types="cypress" />
-/* 
-0 - Login als Gama "agent1"
-1 - wähle Übersichtsseite "Indexfälle"
-2 - wähle "neuen Indexfall anlegen"
-3 - Vorname -> "Berta"
-4 - Nachname ->  "Benz"
-5 - Geburtsdatum -> "25.03.1946"
-6 - Telefonnummer -> "062186319"
-7 - Email -> "bbenz@mail.de"
-8 - Straße -> "Waldweg"
-9 - Hausnummer -> "2"
-10 - PLZ von Mannheim -> "68167"
-11 - Stadt -> "Mannheim"
-12 - wähle "Speichern und schließen
---> "CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "angelegt"
-13 - wähle Indexfall "Berta Benz" aus
-14 - wähle "Nachverfolgung Starten"
---> CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "in Registrierung"
---> CHECK: Tab "Email-Vorlage" ist vorhanden
-14A - Aufrufen der E-Mail Vorlage
---> CHECK: Button "Aktivierungscode erneuern" ist vorhanden
-15 - Extrahiere Anmeldelink aus dem Template
-16 - Logout als GAMA
-17 - Anmeldelink aufrufen
-18 - Klick auf Weiter
-19 - Benutzername: "Berta"
-20 - Passwort: "Password03!"
-21 - Passwort bestätgen  "Password03!"
-22 - Geburtsdatum: "25.03.1946"
-23 - AGB aktivieren
-24 - Klick auf "Registrieren" Button
-25 - Klick auf "weiter"
-26 - Logout als Bürger
-27 -  Login als Gama "agent1"CHECK:  In Übersicht "Indexfälle" steht für "Berta Benz" der Status "Registrierung abgeschlossen"
-28 - Logout als GAMA
-29 - Login als Bürger ("Berta"; "Password03!")
-30 - Initialer Fragebogen "Covid-19-Symptome" -> "nein"
-31 - Bitte geben Sie Ihren behandelnden Hausarzt an. -> Dr. Schmidt
-32 - Nennen Sie uns bitte den (vermuteten) Ort der Ansteckung: -> "Familie"
-33 - Haben Sie eine oder mehrere relevante Vorerkrankungen? -> "nein"
-34 - Arbeiten Sie im medizinischen Umfeld oder in der Pflege? -> "nein"
-35 - Haben Sie Kontakt zu Risikopersonen? -> "nein"
-36 - Klick "weiter"
-37 - Kontakte mit anderen Menschen -> "Carl Benz"
-38 - Klick enter 
-39 - wähle "Kontakt anlegen" in Popup
-40 - Telefonnummer (mobil) -> "017196347526"
-41 - Klick auf "speichern"
-42 - Klick auf "Erfassung abschließen"
-43 - Logout als Bürger
-44 - Login als GAMA "agent1"
---> CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "In Nachverfolgung"
-45 - suche Indexfall "Berta Benz"
-46 - wähle "Fall abschließen"
-47 - Popup "Diesen Fall abschließen" geht auf
-48 - Zusätzliche Informationen zum Fallabschluss: -> "Quarantäne beendet"
-49 - Klicke "OK"
-50 - wähle in Übersicht der Indexfälle den Filter "abgeschlossen"
---> CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "abgeschlossen"
-51 - Logout als GAMA
-*/
 
 describe('S7 - Status wechselt korrekt', () => {
   Cypress.config('defaultCommandTimeout', 20000);
@@ -251,31 +190,76 @@ describe('S7 - Status wechselt korrekt', () => {
         cy.get('[data-cy="second-step-button"] button').should('be.enabled');
         cy.get('[data-cy="second-step-button"] button').click();
 
-        /* CHECK: Seite 3 */
+        /* CHECK: Weiter auf Seite 3 */
         cy.get('[data-cy="third-step-button"]').should('exist');
 
         //TODO
+        cy.wait(500);
+
         /* 37 - Kontakte mit anderen Menschen -> "Carl Benz" */
-        cy.get('[data-cy="multiple-auto-complete-input"]').first().click();
-        cy.get('[data-cy="multiple-auto-complete-input"]').first().type('Carl Benz');
+        /* 38 - Klick enter */
+        cy.get('[data-cy="multiple-auto-complete-input"]').should('exist').first().type('Carl Benz').blur();
+
+        /* 39 - wähle "Kontakt anlegen" in Popup */
+        cy.get('[data-cy="confirm-button"]').should('exist').click();
+
+        //TODO
+        cy.wait(500);
+
+        /* 40 - Telefonnummer (mobil) -> "017196347526" */
+        cy.get('[data-cy="input-mobilePhone"]').should('exist').type('017196347526');
+
+        /* 41 - Klick auf "speichern" */
+        cy.get('[data-cy="button-save"]').should('exist').click();
+
+        /* 42 - Klick auf "Erfassung abschließen" */
+        cy.get('[data-cy="third-step-button"]').should('exist').click(); //TODO
+
+        /* 43 - Logout als Bürger */
+        cy.logOut();
+
+        /* 44 - Login als GAMA "agent1" */
+        cy.logInAgent();
+
+        /* --> CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "in Nachverfolgung" */
+        cy.get('[data-cy="search-case-input"]').should('exist').type('Berta Benz');
+        cy.get('.ag-center-cols-container > div > [col-id="status"]').contains('Nachverfolgung');
+
+        /* 45 - wähle Indexfall "Berta Benz" aus */
+        cy.get('[data-cy="case-data-table"]')
+          .find('.ag-center-cols-container > .ag-row')
+          .should('have.length.greaterThan', 0);
+        cy.get('[data-cy="case-data-table"]')
+          .find('.ag-center-cols-container > .ag-row')
+          .then(($elems) => {
+            $elems[0].click();
+          });
+
+        /* 46 - wähle "Fall abschließen" */
+        cy.get('[data-cy="button-closeCase"]').should('exist').click();
+
+        cy.wait(500);
+
+        /* 47 - Popup "Diesen Fall abschließen" geht auf */
+        /* 48 - Zusätzliche Informationen zum Fallabschluss: -> "Quarantäne beendet" */
+        cy.get('[data-cy="textarea-comment"]').should('exist').type('Quarantäne beendet');
+
+        /* 49 - Klicke "OK" */
+        cy.get('[data-cy="button-confirm"]').should('exist').click();
+
+        /* 49A - wähle "Speichern und schließen" */
+        cy.get('[data-cy="client-submit-and-close-button"] button').should('exist').click();
+
+        //TODO
+        /* 50 - wähle in Übersicht der Indexfälle den Filter "abgeschlossen" */
+        //cy.get('.ag-header-cell-menu-button').should('exist').click();
 
         cy.pause();
 
-        /* 38 - Klick enter */
-        /* 39 - wähle "Kontakt anlegen" in Popup */
-        /* 40 - Telefonnummer (mobil) -> "017196347526" */
-        /* 41 - Klick auf "speichern" */
-        /* 42 - Klick auf "Erfassung abschließen" */
-        /* 43 - Logout als Bürger */
-        /* 44 - Login als GAMA "agent1" */
-        /* --> CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "In Nachverfolgung" */
-        /* 45 - suche Indexfall "Berta Benz" */
-        /* 46 - wähle "Fall abschließen" */
-        /* 47 - Popup "Diesen Fall abschließen" geht auf */
-        /* 48 - Zusätzliche Informationen zum Fallabschluss: -> "Quarantäne beendet" */
-        /* 49 - Klicke "OK" */
-        /* 50 - wähle in Übersicht der Indexfälle den Filter "abgeschlossen" */
         /* --> CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "abgeschlossen" */
+        cy.get('[data-cy="search-case-input"]').should('exist').type('Berta Benz');
+        cy.get('.ag-center-cols-container > div > [col-id="status"]').contains('abgeschlossen');
+
         /* 51 - Logout als GAMA */
         cy.logOut();
       });

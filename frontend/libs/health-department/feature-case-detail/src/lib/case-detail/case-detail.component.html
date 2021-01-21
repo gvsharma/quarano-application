@@ -63,6 +63,7 @@
       <div class="spacer"></div>
       <button
         mat-button
+        data-cy="button-closeCase"
         color="primary"
         (click)="checkForClose(caseDetail)"
         [disabled]="!caseDetail._links?.hasOwnProperty('conclude') || caseDetail.status === 'abgeschlossen'"

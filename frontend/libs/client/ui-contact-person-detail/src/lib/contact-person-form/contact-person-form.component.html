@@ -45,6 +45,7 @@
             minlength="5"
             [placeholder]="'CONTACT_PERSON_FORM.TELEFONNUMMER_FESTNETZ' | translate"
             formControlName="phone"
+            data-cy="input-phone"
             type="phone"
             #phone_input
             (blur)="trimValue(phone_input)"
@@ -60,6 +61,7 @@
             minlength="5"
             [placeholder]="'CONTACT_PERSON_FORM.TELEFONNUMMER_MOBIL' | translate"
             formControlName="mobilePhone"
+            data-cy="input-mobilePhone"
             type="phone"
             #mobile_phone_input
             (blur)="trimValue(mobile_phone_input)"
@@ -243,7 +245,7 @@
       </mat-form-field>
     </mat-card-content>
     <mat-card-actions>
-      <qro-button [disabled]="formGroup.invalid || formGroup.pristine" [loading]="loading">
+      <qro-button [disabled]="formGroup.invalid || formGroup.pristine" [loading]="loading" data-cy="button-save">
         {{ 'CONTACT_PERSON_FORM.SPEICHERN' | translate }}
       </qro-button>
       <button type="button" mat-raised-button color="secondary" (click)="cancel()">
