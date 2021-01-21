@@ -120,36 +120,93 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', { defaultCommandTimeou
     cy.get('[data-cy="confirm-button"]').should('exist').click();
 
     // 35 - Telefonnummer (mobil) -> "01758631534"
-    // TODO data-cy
-    cy.get('input').should('exist').type('01758631534');
+    cy.wait(500);
+    cy.get('[data-cy="input-mobilePhone"]').should('exist').type('01758631534');
 
     // 36 - Klick auf "speichern"
-    // TODO data-cy
-    cy.get('button.mat-focus-indicator.mat-raised-button.mat-button-base.mat-primary').should('exist').click();
+    cy.get('[data-cy="button-save"]').should('exist').click();
 
     // 37 - Klick auf "Erfassung abschließen"
     cy.get('[data-cy="third-step-button"]').should('exist').click();
 
     // 38 - Logout als Bürger
     cy.logOut();
+
     // 39 - Login als GAMA "agent1"
+    cy.logInAgent();
+
     // 40 - suche Indexfall "Julia Klein"
+    cy.get('[data-cy="search-case-input"]').should('exist').type('Julia Klein');
+    cy.get('[data-cy="case-data-table"]')
+      .find('.ag-center-cols-container > .ag-row')
+      .should('have.length.greaterThan', 0);
+    cy.get('[data-cy="case-data-table"]')
+      .find('.ag-center-cols-container > .ag-row')
+      .then(($elems) => {
+        $elems[0].click();
+      });
+
     // 41 - wähle Reiter "Kontakte"
+    cy.get('[data-cy="contacts-tab"]').should('exist').click();
+
     // 42 - klick auf "Manfred Klein"
+    cy.get('[data-cy="case-data-table"]')
+      .find('.ag-center-cols-container > .ag-row')
+      .should('have.length.greaterThan', 0);
+    cy.get('[data-cy="case-data-table"]')
+      .find('.ag-center-cols-container > .ag-row')
+      .then(($elems) => {
+        $elems[0].click();
+      });
+
     // 43 - Geburtsdatum -> "25.07.1980"
+    cy.get('[data-cy="input-dayofbirth"]').should('exist').type('25.07.1980');
+
     // 44 - Email -> "mklein@gmx.de"
+    cy.get('[data-cy="input-email"]').should('exist').type('mklein@gmx.de');
+
     // 45 - wähle "Speichern"
+    cy.get('[data-cy="client-submit-button"]').should('exist').click();
+
     // 46 - wähle "Nachverfolgung Starten"
+    cy.wait(500);
+    cy.get('[data-cy="start-tracking-span"]').should('exist').click();
+
     // 47 - Extrahiere Anmeldelink aus dem Template
-    // 48 - Logout als GAMA
-    // 49 - Anmeldelink aufrufen
+    cy.get('[data-cy="email-tab"]').should('exist').click();
+    cy.get('qro-client-mail > div > pre')
+      .should('exist')
+      .extractActivationCode(0, Cypress.env('regex')['contact'])
+      .then((extractedActivationCode) => {
+        cy.log(extractedActivationCode);
+        // 48 - Logout als GAMA
+        cy.logOut();
+
+        // 49 - Anmeldelink aufrufen
+        cy.visit(extractedActivationCode);
+      });
+
     // 50 - Klick auf "Weiter"
+    cy.get('[data-cy="cta-button-index"]').should('exist').click();
+
     // 51 - Benutzername: "Manfred"
+    cy.get('[data-cy="input-username"]').should('exist').type('Manfred');
+
     // 52 - Passwort: "Password02!"
+    cy.get('[data-cy="input-password"]').should('exist').type('Password02!');
+
     // 53 - Passwort bestätgen  "Password02!"
+    cy.get('[data-cy="input-password-confirm"]').should('exist').type('Password02!');
+
     // 54 - Geburtsdatum: "25.07.1980"
+    cy.get('[data-cy="input-dateofbirth"]').should('exist').type('25.07.1980');
+
     // 55 - AGB aktivieren
+    cy.get('[data-cy="input-privacy-policy"]').should('exist').click();
+
     // 56 - Klick auf "Registrieren" Button
+    cy.get('[data-cy="registration-submit-button"]').should('exist').click();
+
     // 57 - Straße -> "Hauptstraße"
     // 58 - Hausnummer -> "152"
     // 59 - PLZ von Ilvesheim -> "68549"
