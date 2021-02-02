@@ -173,6 +173,7 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', { defaultCommandTimeou
     cy.get('[data-cy="start-tracking-span"]').should('exist').click();
 
     // 47 - Extrahiere Anmeldelink aus dem Template
+    cy.wait(500);
     cy.get('[data-cy="email-tab"]').should('exist').click();
     cy.get('qro-client-mail > div > pre')
       .should('exist')
@@ -208,20 +209,37 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', { defaultCommandTimeou
     cy.get('[data-cy="registration-submit-button"]').should('exist').click();
 
     // 57 - Straße -> "Hauptstraße"
+    cy.get('[data-cy="street-input"]').should('exist').type('Hauptstraße');
+
     // 58 - Hausnummer -> "152"
+    cy.get('[data-cy="house-number-input"]').should('exist').type('152');
+
     // 59 - PLZ von Ilvesheim -> "68549"
+    cy.get('[data-cy="zip-code-input"]').should('exist').type('68549');
+
     // 60 - Stadt -> "Ilvesheim"
+    cy.get('[data-cy="city-input"]').should('exist').type('Ilvesheim');
+
     // 61 - Klick auf "weiter"
+    cy.get('[data-cy="first-step-button"]').should('exist').click();
+
     // CHECK: Popup erscheint mit Text "Bitte prüfen Sie die eingegebene PLZ
     // Das für die PLZ 68549 zuständige Gesundheitsamt arbeitet nicht mit dieser Software. Bitte überprüfen Sie zur Sicherheit Ihre Eingabe. Ist diese korrekt, dann verwenden Sie diese Software nicht weiter und wenden Sie sich bitte an Ihr zuständiges Gesundheitsamt."
     // 62 - Klick "PLZ bestätigen"
+    cy.get('[data-cy="confirm-button"]').should('exist').click();
+
     // CHECK: Es erscheint folgender Text: "Das für Sie zuständige Gesundheitsamt arbeitet nicht mit Quarano. Bitte wenden Sie sich direkt an Ihr Gesundheitsamt.
     // Landratsamt Rhein-Neckar-Kreis; Gesundheitsamt; Kurfürstenanlage 38-40; 69115 Heidelberg
     // E-Mail:	infektionsschutz@rhein-neckar-kreis.de; Telefon:	062215221817; Fax:	062215221899"
     // CHECK: neue Anmeldung als "Manfred" (Passwort: "Password02!") ist nicht möglich
     // 63 - Login als GAMA "agent1"
+    cy.logInAgent();
+
     // 64 - wähle Übersichtsseite "Kontaktfälle"
+    cy.get('[data-cy="contact-cases"]').should('exist').click();
+
     // CHECK: Status bei "Manfred Klein" ist "Externe PLZ"
     // 65 - Logout als GAMA
+    cy.logOut();
   });
 });

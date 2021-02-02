@@ -48,7 +48,7 @@ const extractActivationCode = (elem: JQuery, i: number, regexNum: number) => {
   let regex: RegExp;
   if (regexNum === Cypress.env('regex')['index']) {
     regex = /\/client\/enrollment\/landing\/index\/(.*)/g;
-  } else if (regexNum === Cypress.env('regex.contact')) {
+  } else if (regexNum === Cypress.env('regex')['contact']) {
     regex = /\/client\/enrollment\/landing\/contact\/(.*)/g;
   }
 
