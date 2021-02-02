@@ -213,7 +213,7 @@ describe('S7 - Status wechselt korrekt', () => {
         cy.get('[data-cy="button-save"]').should('exist').click();
 
         /* 42 - Klick auf "Erfassung abschließen" */
-        cy.get('[data-cy="third-step-button"]').should('exist').click(); //TODO
+        cy.get('[data-cy="third-step-button"]').should('exist').click();
 
         /* 43 - Logout als Bürger */
         cy.logOut();
@@ -238,6 +238,7 @@ describe('S7 - Status wechselt korrekt', () => {
         /* 46 - wähle "Fall abschließen" */
         cy.get('[data-cy="button-closeCase"]').should('exist').click();
 
+        //TODO
         cy.wait(500);
 
         /* 47 - Popup "Diesen Fall abschließen" geht auf */
@@ -250,11 +251,11 @@ describe('S7 - Status wechselt korrekt', () => {
         /* 49A - wähle "Speichern und schließen" */
         cy.get('[data-cy="client-submit-and-close-button"] button').should('exist').click();
 
-        //TODO
         /* 50 - wähle in Übersicht der Indexfälle den Filter "abgeschlossen" */
-        //cy.get('.ag-header-cell-menu-button').should('exist').click();
-
-        cy.pause();
+        cy.get('.ag-icon-menu').should('exist').first().click();
+        cy.get('[data-cy="button-selectAll"]').should('exist').click();
+        cy.get('[data-cy="button-unselectAll"]').should('exist').click();
+        cy.get('[data-cy="checkbox-filter"]').should('exist').first().click();
 
         /* --> CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "abgeschlossen" */
         cy.get('[data-cy="search-case-input"]').should('exist').type('Berta Benz');
