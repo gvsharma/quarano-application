@@ -69,7 +69,7 @@ describe('S7 - Status wechselt korrekt', () => {
     cy.get('[data-cy="client-submit-and-close-button"] button').should('exist').click();
 
     /* CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "angelegt" */
-    cy.get('[data-cy="search-case-input"]').should('exist').type('Berta Benz');
+    cy.get('[data-cy="search-index-case-input"]').should('exist').type('Berta Benz');
     cy.get('.ag-center-cols-container > div > [col-id="status"]').contains('angelegt');
 
     /* 13 - wähle Indexfall "Berta Benz" aus */
@@ -155,7 +155,7 @@ describe('S7 - Status wechselt korrekt', () => {
         cy.logInAgent();
 
         /* CHECK:  In Übersicht "Indexfälle" steht für "Berta Benz" der Status "Registrierung abgeschlossen" */
-        cy.get('[data-cy="search-case-input"]').should('exist').type('Berta Benz');
+        cy.get('[data-cy="search-index-case-input"]').should('exist').type('Berta Benz');
         cy.get('.ag-center-cols-container > div > [col-id="status"]').contains('Registrierung abgeschlossen');
 
         /* 28 - Logout als GAMA */
@@ -222,7 +222,7 @@ describe('S7 - Status wechselt korrekt', () => {
         cy.logInAgent();
 
         /* --> CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "in Nachverfolgung" */
-        cy.get('[data-cy="search-case-input"]').should('exist').type('Berta Benz');
+        cy.get('[data-cy="search-index-case-input"]').should('exist').type('Berta Benz');
         cy.get('.ag-center-cols-container > div > [col-id="status"]').contains('Nachverfolgung');
 
         /* 45 - wähle Indexfall "Berta Benz" aus */
@@ -258,7 +258,7 @@ describe('S7 - Status wechselt korrekt', () => {
         cy.get('[data-cy="checkbox-filter"]').should('exist').first().click();
 
         /* --> CHECK: In Übersicht "Indexfälle" steht für "Berta Benz" der Status "abgeschlossen" */
-        cy.get('[data-cy="search-case-input"]').should('exist').type('Berta Benz');
+        cy.get('[data-cy="search-index-case-input"]').should('exist').type('Berta Benz');
         cy.get('.ag-center-cols-container > div > [col-id="status"]').contains('abgeschlossen');
 
         /* 51 - Logout als GAMA */
