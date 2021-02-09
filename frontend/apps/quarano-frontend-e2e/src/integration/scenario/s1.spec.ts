@@ -124,7 +124,7 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', { defaultCommandTimeou
     cy.get('[data-cy="input-mobilePhone"]').should('exist').type('01758631534');
 
     // 36 - Klick auf "speichern"
-    cy.get('[data-cy="button-save"]').should('exist').click();
+    cy.get('[data-cy="submit-button"]').should('exist').click();
 
     // 37 - Klick auf "Erfassung abschließen"
     cy.get('[data-cy="third-step-button"]').should('exist').click();
@@ -136,7 +136,7 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', { defaultCommandTimeou
     cy.logInAgent();
 
     // 40 - suche Indexfall "Julia Klein"
-    cy.get('[data-cy="search-case-input"]').should('exist').type('Julia Klein');
+    cy.get('[data-cy="search-index-case-input"]').should('exist').type('Julia Klein');
     cy.get('[data-cy="case-data-table"]')
       .find('.ag-center-cols-container > .ag-row')
       .should('have.length.greaterThan', 0);
@@ -225,13 +225,52 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', { defaultCommandTimeou
 
     // CHECK: Popup erscheint mit Text "Bitte prüfen Sie die eingegebene PLZ
     // Das für die PLZ 68549 zuständige Gesundheitsamt arbeitet nicht mit dieser Software. Bitte überprüfen Sie zur Sicherheit Ihre Eingabe. Ist diese korrekt, dann verwenden Sie diese Software nicht weiter und wenden Sie sich bitte an Ihr zuständiges Gesundheitsamt."
+    cy.get('[data-cy="dialog-content"]')
+      .should('exist')
+      .should(
+        'have.text',
+        'Das für die PLZ 68549 zuständige Gesundheitsamt arbeitet nicht mit dieser Software. Bitte überprüfen Sie zur Sicherheit Ihre Eingabe. Ist diese korrekt, dann verwenden Sie diese Software nicht weiter und wenden Sie sich bitte an Ihr zuständiges Gesundheitsamt.'
+      );
+    cy.get('[data-cy="dialog-title"]').should('exist').should('have.text', 'Bitte prüfen Sie die eingegebene PLZ');
+
     // 62 - Klick "PLZ bestätigen"
     cy.get('[data-cy="confirm-button"]').should('exist').click();
 
     // CHECK: Es erscheint folgender Text: "Das für Sie zuständige Gesundheitsamt arbeitet nicht mit Quarano. Bitte wenden Sie sich direkt an Ihr Gesundheitsamt.
     // Landratsamt Rhein-Neckar-Kreis; Gesundheitsamt; Kurfürstenanlage 38-40; 69115 Heidelberg
     // E-Mail:	infektionsschutz@rhein-neckar-kreis.de; Telefon:	062215221817; Fax:	062215221899"
+    cy.get('[data-cy="health-department-name"]').should('exist').should('have.text', 'Landratsamt Rhein-Neckar-Kreis');
+    cy.get('[data-cy="PLZ-info-text"]')
+      .should('exist')
+      .should(
+        'have.text',
+        ' Das für Sie zuständige Gesundheitsamt arbeitet nicht mit Quarano. Bitte wenden Sie sich direkt an Ihr Gesundheitsamt. '
+      );
+    cy.get('[data-cy="health-department-name-2"]')
+      .should('exist')
+      .should('have.text', 'Landratsamt Rhein-Neckar-Kreis');
+    cy.get('[data-cy="health-department-street"]').should('exist').should('have.text', 'Kurfürstenanlage 38-40');
+    cy.get('[data-cy="health-department-zipCode"]').should('exist').should('have.text', '69115 Heidelberg');
+    cy.get('[data-cy="health-department-email"]')
+      .should('exist')
+      .should('have.text', 'infektionsschutz@rhein-neckar-kreis.de');
+    cy.get('[data-cy="health-department-phone"]').should('exist').should('have.text', '062215221817');
+    cy.get('[data-cy="health-department-fax"]').should('exist').should('have.text', '062215221899');
+
+    // 62b) Klick auf “Browser Back” button
+    cy.go('back');
+
+    // CHECK: User ist auf Loginseite und ist nicht mehr eingeloggt (rechts oben wird kein Name angezeigt)
+    cy.get('[data-cy="profile-user-button"]').should('not.exist');
+
     // CHECK: neue Anmeldung als "Manfred" (Passwort: "Password02!") ist nicht möglich
+    cy.logIn('Manfred', 'Password02!');
+    cy.get('[data-cy="forbidden-title"]').should('exist').should('have.text', 'Da ist etwas schief gelaufen...');
+    cy.get('[data-cy="forbidden-subtitle"]').should('exist').should('have.text', 'Zugriff verweigert');
+    cy.get('[data-cy="forbidden-message"]')
+      .should('exist')
+      .should('have.text', 'Für Sie ist ein anderes Gesundheitsamt zuständig. Wenden Sie sich bitte an dieses!');
+
     // 63 - Login als GAMA "agent1"
     cy.logInAgent();
 
@@ -239,6 +278,17 @@ describe('S1 - Externe PLZ führt zu Status externe PLZ', { defaultCommandTimeou
     cy.get('[data-cy="contact-cases"]').should('exist').click();
 
     // CHECK: Status bei "Manfred Klein" ist "Externe PLZ"
+    cy.get('[data-cy="search-contact-case-input"]').should('exist').type('Manfred Klein');
+    cy.get('[data-cy="case-data-table"]')
+      .find('.ag-center-cols-container > .ag-row')
+      .should('have.length.greaterThan', 0);
+    cy.get('[data-cy="case-data-table"]')
+      .find('.ag-center-cols-container > .ag-row')
+      .then(($elems) => {
+        $elems[0].click();
+      });
+    cy.get('[data-cy="case-status"]').should('exist').should('have.text', 'Externe PLZ');
+
     // 65 - Logout als GAMA
     cy.logOut();
   });
